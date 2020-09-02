@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.min.js"
+        integrity="sha512-zT3zHcFYbQwjHdKjCu6OMmETx8fJA9S7E6W7kBeFxultf75OPTYUJigEKX58qgyQMi1m1EgenfjMXlRZG8BXaw=="
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <header>
+        <input id="cerca-input" type="text" placeholder="Cerca il titolo di un film">
+        <button id="cerca-btn">Cerca</button>
+    </header>
+    <main>
+        <div class="films-container">
+            <div class="film-dettaglio">
+
+            </div>
+        </div>
+    </main>
+
+    <!-- template Handlebars -->
+    <script id="entry-template" type="text/x-handlebars-template">
+      <ul class="film">
+        <li>
+            <span class="dati-titoli">Titolo</span>
+            <span class="dati-nomi">{{title}}</span>
+        </li>
+        <li>
+            <span class="dati-titoli">Titolo Originale</span>
+            <span class="dati-nomi">{{original_title}}</span>
+        </li>
+        <li>
+            <span class="dati-titoli">Lingua</span>
+            <span class="dati-nomi">{{original_language}}</span>
+        </li>
+        <li>
+            <span class="dati-titoli">Voto</span>
+            <span class="dati-nomi">{{vote_average}}</span>
+        </li>
+        
+      </ul>
+    </script>
+
+
+    <script src="js/script.js"></script>
+</body>
+
+</html>
