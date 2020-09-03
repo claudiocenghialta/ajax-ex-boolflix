@@ -22,10 +22,9 @@
         <button id="cerca-btn">Cerca</button>
     </header>
     <main>
+        <div class="error-message"></div>
         <div class="films-container">
-            <div class="film-dettaglio">
-
-            </div>
+            <div class="film-dettaglio"></div>
         </div>
     </main>
 
@@ -42,11 +41,16 @@
         </li>
         <li>
             <span class="dati-titoli">Lingua Originale: </span>
-            <span class="dati-nomi">{{original_language}}</span>
+            <span class="dati-nomi">{{{original_language}}}</span>
+            
         </li>
         <li>
             <span class="dati-titoli">Voto: </span>
-            <span class="dati-nomi">{{vote_average}}</span>
+            <span class="dati-nomi">{{{vote_average}}}</span>
+        </li>
+        <li>
+            <span class="dati-titoli">Tipo: </span>
+            <span class="dati-nomi">{{type}}</span>
         </li>
         
       </ul>

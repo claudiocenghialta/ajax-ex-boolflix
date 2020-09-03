@@ -21,3 +21,21 @@ body {
     font-weight: bold;
     color: gray;
 }
+
+.yellow {
+    color: yellow;
+}
+.grey {
+    color: grey;
+
+}
+img.flags {
+    height: 15px;
+    vertical-align: middle;
+}
+.error-message{
+    display: none;
+}
+.visible{
+    display: block;
+}
