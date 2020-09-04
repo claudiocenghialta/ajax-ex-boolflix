@@ -46,20 +46,19 @@ function iniziaRicerca() {
     //controllo valore stringa 
     if (datiRicerca != "") {
         resetData();
-        //lancio funzione per ricerca film
-        cercaFilm(datiRicerca);
-        cercaSerie(datiRicerca);
+        //lancio funzione per ricerca film e serie tv
+        ricercaGlobale(datiRicerca, "https://api.themoviedb.org/3/search/movie", "Film");
+        ricercaGlobale(datiRicerca, "https://api.themoviedb.org/3/search/tv", 'Serie TV');
     } else {
         resetData();
         //stampo messaggio di errore al posto dell'elenco titoli
         errorMessage("ricercaVuota");
     };
 }
-
-function cercaFilm(stringaRicerca) {
+function ricercaGlobale(stringaRicerca, url, tipo) {
     //faccio chiamata ajax sulla base del valore salvato nella variabile passata
     $.ajax({
-        url: "https://api.themoviedb.org/3/search/movie",
+        url: url, //url passato
         method: "GET",
         data: {
             api_key: "f55f5e2e7cdc1cc61c195d269b630b9c",
@@ -69,30 +68,7 @@ function cercaFilm(stringaRicerca) {
         },
         success: function (resp) {
             //passo l'array con i risultati alla funzione che stampa l'elenco
-            stampaElenco(resp.results, 'Film');
-        },
-        error: function (resp) {
-            //segnalo errore e compilo log
-            alert('errore')
-            console.log(resp);
-
-        },
-    }) //fine chiamata ajax
-}
-function cercaSerie(stringaRicerca) {
-    //faccio chiamata ajax sulla base del valore salvato nella variabile passata
-    $.ajax({
-        url: "https://api.themoviedb.org/3/search/tv",
-        method: "GET",
-        data: {
-            api_key: "f55f5e2e7cdc1cc61c195d269b630b9c",
-            language: "it-IT",
-            query: stringaRicerca, //variabile passata 
-            include_adult: "false"
-        },
-        success: function (resp) {
-            //passo  l'array con i risultati alla funzione che stampa l'elenco
-            stampaElenco(resp.results, 'Serie TV');
+            stampaElenco(resp.results, tipo);
         },
         error: function (resp) {
             //segnalo errore e compilo log
@@ -108,20 +84,15 @@ function stampaElenco(data, type) {
     var source = $("#entry-template").html();
     var template = Handlebars.compile(source);
     //controllo se ci sono dei risultati (o già stampati su html oppure nell'array)
-    if ($('.film-dettaglio').html() == "" && data.length == 0) {
-        errorMessage("nessunRisultato");
+    if (data.length == 0) {
+        errorMessage("nessunRisultato", type);
     } else {
-        //resetto il messaggio di errore il messaggio
-        //necessario perchè se non trova film inserisce il messaggio 
-        //se poi non trova serie tv lo lascio
-        //ma nel caso in cui ci sono serie tv il messaggio non deve apparire
-        resetErrorMessage();
         //ciclo tutti i risultati ottenuti
         for (var i = 0; i < data.length; i++) {
             if (type == 'Film') {
                 var titolo = data[i].title;
                 var titoloOriginale = data[i].original_title;
-            } else {
+            } else if (type == 'Serie TV') {
                 var titolo = data[i].name;
                 var titoloOriginale = data[i].original_name;
             };
@@ -131,43 +102,56 @@ function stampaElenco(data, type) {
                 original_title: titoloOriginale,
                 original_language: flags(data[i].original_language),
                 vote_average: stars(data[i].vote_average),
-                type: type
+                type: type,
+                img: "https://image.tmdb.org/t/p/w342/" + data[i].poster_path
             };
-            // stampo sui template Handlebars ogni risultato del ciclo for
-            var html = template(context);
-            $('.film-dettaglio').append(html);
+            if (type == 'Film') {
+                // stampo sui template Handlebars ogni risultato del ciclo for
+                var html = template(context);
+                $('.film-dettaglio').append(html);
+            } else if (type == 'Serie TV') {
+                // stampo sui template Handlebars ogni risultato del ciclo for
+                var html = template(context);
+                $('.serie-tv-dettaglio').append(html);
+            };
+
         };
     }
 
 };
 
-function errorMessage(tipo) {
-    if (tipo == "ricercaVuota") {
-        var messaggioErrore = 'Attenzione, la ricerca non può essere vuota';
-    } else if (tipo == "nessunRisultato") {
-        var messaggioErrore = 'Attenzione, la ricerca non ha prodotto alcun risultato';
+function errorMessage(tipoErrore, tipoFilmSerie) {
+    if (tipoErrore == "ricercaVuota") {
+        alert('Attenzione, la ricerca non può essere vuota');
+    } else if (tipoErrore == "nessunRisultato") {
+        var messaggioErrore = 'Nessun risultato nella sezione ' + tipoFilmSerie;
+        if (tipoFilmSerie == "Film") {
+            $('.film-dettaglio').html(messaggioErrore);
+        } else if (tipoFilmSerie == "Serie TV") {
+            $('.serie-tv-dettaglio').html(messaggioErrore);
+        }
+
     };
-    $('.error-message').html(messaggioErrore);
-    $('.error-message').addClass('visible');
-};
-function resetErrorMessage() {
-    $('.error-message').html("");
-    $('.error-message').removeClass('visible');
 };
 function resetData() {
     // svuoto l'elenco dei film già cercati in precedenza
-    resetErrorMessage();
     $('.film-dettaglio').empty();
+    $('.serie-tv-dettaglio').empty();
 };
 
 
 function stars(voto) {
-    var votoRounded = Math.ceil(voto / 2);
+    var resto = voto % 2;
+    var votoRounded = Math.floor(voto / 2);
     var stars = "";
     for (var i = 1; i <= 5; i++) {
         if (i <= votoRounded) {
             stars += '<i class="fas fa-star yellow"></i>'; //stella piena
-        } else {
+        } else if (resto != 0) {
+            stars += '<i class="fas fa-star-half-alt yellow"></i>'; //stella a metà
+            resto = 0;
+        }
+        else {
             stars += '<i class="far fa-star grey"></i>'; //stella vuota
         }
     };

@@ -23,14 +23,23 @@
     </header>
     <main>
         <div class="error-message"></div>
-        <div class="films-container">
+        <div class="sezione-film">
+            <h2>Film</h2>
             <div class="film-dettaglio"></div>
+        </div>
+        <div class="sezione-serie-tv">
+            <h2>Serie TV</h2>
+            <div class="serie-tv-dettaglio"></div>
         </div>
     </main>
 
     <!-- template Handlebars -->
     <script id="entry-template" type="text/x-handlebars-template">
       <ul class="film">
+        <li>
+            <span class="dati-titoli">Immagine: </span>
+            <span class="dati-nomi"><img src="{{img}}" alt="" srcset=""></span>
+        </li>
         <li>
             <span class="dati-titoli">Titolo: </span>
             <span class="dati-nomi">{{title}}</span>
