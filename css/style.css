@@ -14,28 +14,52 @@ body {
     font-family: 'Open Sans', sans-serif;
     font-size: 14px;
 }
-.film {
-    margin: 20px auto;
-}
-.film .dati-titoli {
-    font-weight: bold;
-    color: gray;
-}
 
-.yellow {
-    color: yellow;
-}
-.grey {
-    color: grey;
-
-}
-img.flags {
-    height: 15px;
-    vertical-align: middle;
-}
 .error-message{
     display: none;
 }
 .visible{
     display: block;
+}
+
+/* formattazione cards film e serie tv */
+.film-card{
+    margin: 20px auto;
+    width: 342px;
+    height: 520px;
+    position: relative;
+}
+.film-card img.poster {
+   object-fit: cover;
+}
+.film-card .film-dati{
+    list-style: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 30px 5px;
+    background-color: rgba(0,0,0,0.8);
+    color: white;
+    display: none;
+}
+.film-card:hover .film-dati{
+    display: block;
+}
+.film-card .dati-titoli {
+    font-weight: bold;
+    color: gray;
+}
+
+.film-card .yellow {
+    color: yellow;
+}
+.film-card .grey {
+    color: grey;
+
+}
+.film-card img.flags {
+    height: 15px;
+    vertical-align: middle;
 }

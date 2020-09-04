@@ -35,34 +35,34 @@
 
     <!-- template Handlebars -->
     <script id="entry-template" type="text/x-handlebars-template">
-      <ul class="film">
-        <li>
-            <span class="dati-titoli">Immagine: </span>
-            <span class="dati-nomi"><img src="{{img}}" alt="" srcset=""></span>
-        </li>
-        <li>
-            <span class="dati-titoli">Titolo: </span>
-            <span class="dati-nomi">{{title}}</span>
-        </li>
-        <li>
-            <span class="dati-titoli">Titolo Originale: </span>
-            <span class="dati-nomi">{{original_title}}</span>
-        </li>
-        <li>
-            <span class="dati-titoli">Lingua Originale: </span>
-            <span class="dati-nomi">{{{original_language}}}</span>
+        <div class="film-card">
+            <img class="poster" src="{{img}}" alt="" srcset="">
+            <ul class="film-dati">
+                <li>
+                    <span class="dati-titoli">Titolo: </span>
+                    <span class="dati-nomi">{{title}}</span>
+                </li>
+                <li>
+                    <span class="dati-titoli">Titolo Originale: </span>
+                    <span class="dati-nomi">{{original_title}}</span>
+                </li>
+                <li>
+                    <span class="dati-titoli">Lingua Originale: </span>
+                    <span class="dati-nomi">{{{original_language}}}</span>
             
-        </li>
-        <li>
-            <span class="dati-titoli">Voto: </span>
-            <span class="dati-nomi">{{{vote_average}}}</span>
-        </li>
-        <li>
-            <span class="dati-titoli">Tipo: </span>
-            <span class="dati-nomi">{{type}}</span>
-        </li>
-        
-      </ul>
+                </li>
+                <li>
+                    <span class="dati-titoli">Voto: </span>
+                    <span class="dati-nomi">{{{vote_average}}}</span>
+                </li>
+                <li>
+                    <span class="dati-titoli">Tipo: </span>
+                    <span class="dati-nomi">{{type}}</span>
+                </li>
+            
+            </ul>
+        </div>
+      
     </script>
 
 

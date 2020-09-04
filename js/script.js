@@ -96,6 +96,12 @@ function stampaElenco(data, type) {
                 var titolo = data[i].name;
                 var titoloOriginale = data[i].original_name;
             };
+            //compilo valore del link al poster del film 
+            var img = "https://image.tmdb.org/t/p/w342/" + data[i].poster_path
+            if (data[i].poster_path == null) {
+                //se non è presente una immagine nel database metto una immagine placeholder
+                img = 'img/no-poster.jpg'
+            }
             var context = {
                 //prendo solo i valori da stampare a video e non tutti i dati ricevuti in risposta alla chiamata
                 title: titolo,
@@ -103,7 +109,7 @@ function stampaElenco(data, type) {
                 original_language: flags(data[i].original_language),
                 vote_average: stars(data[i].vote_average),
                 type: type,
-                img: "https://image.tmdb.org/t/p/w342/" + data[i].poster_path
+                img: img
             };
             if (type == 'Film') {
                 // stampo sui template Handlebars ogni risultato del ciclo for
@@ -165,7 +171,7 @@ function flags(lang) {
     };
     for (var k in flagImg) {
         if (k == lang) {
-            return '<img class="flags" src="img/' + flagImg[k] + '" alt=""></img>';
+            return '<img class="flags" src="img/flags/' + flagImg[k] + '" alt=""></img>';
         };
     }
     return lang;
