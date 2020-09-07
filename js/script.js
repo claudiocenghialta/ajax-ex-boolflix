@@ -47,8 +47,8 @@ function iniziaRicerca() {
     if (datiRicerca != "") {
         resetData();
         //lancio funzione per ricerca film e serie tv
-        ricercaGlobale(datiRicerca, "https://api.themoviedb.org/3/search/movie", "Film");
-        ricercaGlobale(datiRicerca, "https://api.themoviedb.org/3/search/tv", 'Serie TV');
+        ricercaGlobale(datiRicerca, "https://api.themoviedb.org/3/search/movie", "movie");
+        ricercaGlobale(datiRicerca, "https://api.themoviedb.org/3/search/tv", 'tv');
     } else {
         resetData();
         //stampo messaggio di errore al posto dell'elenco titoli
@@ -69,6 +69,7 @@ function ricercaGlobale(stringaRicerca, url, tipo) {
         success: function (resp) {
             //passo l'array con i risultati alla funzione che stampa l'elenco
             stampaElenco(resp.results, tipo);
+
         },
         error: function (resp) {
             //segnalo errore e compilo log
@@ -89,10 +90,10 @@ function stampaElenco(data, type) {
     } else {
         //ciclo tutti i risultati ottenuti
         for (var i = 0; i < data.length; i++) {
-            if (type == 'Film') {
+            if (type == 'movie') {
                 var titolo = data[i].title;
                 var titoloOriginale = data[i].original_title;
-            } else if (type == 'Serie TV') {
+            } else if (type == 'tv') {
                 var titolo = data[i].name;
                 var titoloOriginale = data[i].original_name;
             };
@@ -104,36 +105,108 @@ function stampaElenco(data, type) {
             }
             var context = {
                 //prendo solo i valori da stampare a video e non tutti i dati ricevuti in risposta alla chiamata
+                id: data[i].id,
                 title: titolo,
                 original_title: titoloOriginale,
                 original_language: flags(data[i].original_language),
                 vote_average: stars(data[i].vote_average),
                 type: type,
-                img: img
+                img: img,
+                popolarita: data[i].popularity,
+                overview: data[i].overview.substring(0, 200) + '[...]'
             };
-            if (type == 'Film') {
+            if (type == 'movie') {
                 // stampo sui template Handlebars ogni risultato del ciclo for
                 var html = template(context);
                 $('.film-dettaglio').append(html);
-            } else if (type == 'Serie TV') {
+            } else if (type == 'tv') {
                 // stampo sui template Handlebars ogni risultato del ciclo for
                 var html = template(context);
                 $('.serie-tv-dettaglio').append(html);
             };
-
+            ricercaDettagli(data[i].id, type)
         };
     }
+};
+function ricercaDettagli(id, tipo) {
+    var url = "https://api.themoviedb.org/3/" + tipo + '/' + id;
 
+    //faccio chiamata ajax sulla base del valore salvato nella variabile passata
+    $.ajax({
+        url: url, //url passato
+        method: "GET",
+        data: {
+            api_key: "f55f5e2e7cdc1cc61c195d269b630b9c",
+            language: "it-IT",
+            append_to_response: 'credits',
+        },
+        success: function (resp) {
+            //passo l'array con i risultati alla funzione che stampa l'elenco
+            var generi = resp.genres;
+            var attori = resp.credits.cast;
+            stampaDettagli(id, tipo, generi, attori);
+        },
+        error: function (resp) {
+            //segnalo errore e compilo log
+            alert('errore')
+            console.log(resp);
+
+        },
+    }) //fine chiamata ajax
+}
+function stampaDettagli(id, tipo, generi, attori) {
+    //elenco attori
+    var elencoAttori = '';
+    var numAttori = attori.length;
+    if (numAttori > 5) {
+        numAttori = 5
+    }
+    //stampo al massimo 5 attori per ogni film o serie tv
+    for (var i = 0; i < numAttori; i++) {
+        elencoAttori += attori[i].name;
+        //se non sono all'ultimo attore aggiiungo una virgola 
+        if (i != numAttori - 1) {
+            elencoAttori += ', ';
+        }
+    }
+
+    //elenco generi
+    var elencoGeneri = '';
+    for (var i = 0; i < generi.length; i++) {
+        elencoGeneri += generi[i].name;
+        //se non sono all'ultimo attore aggiiungo una virgola 
+        if (i != generi.length - 1) {
+            elencoGeneri += ', ';
+        }
+    }
+    //elementi per template Handlebars
+    var source = $("#template-generi-cast").html();
+    var template = Handlebars.compile(source);
+    var context = {
+        genre: elencoGeneri,
+        cast: elencoAttori,
+    };
+    if (tipo == 'movie') {
+        // stampo sui template Handlebars ogni risultato del ciclo for
+        var html = template(context);
+        $('.film-dettaglio .film-card[data-id="' + id + '"] .film-dati').append(html);
+    } else if (tipo == 'tv') {
+        // stampo sui template Handlebars ogni risultato del ciclo for
+        var html = template(context);
+        $('.serie-tv-dettaglio .film-card[data-id="' + id + '"] .film-dati').append(html);
+    };
 };
 
 function errorMessage(tipoErrore, tipoFilmSerie) {
+
     if (tipoErrore == "ricercaVuota") {
         alert('Attenzione, la ricerca non può essere vuota');
     } else if (tipoErrore == "nessunRisultato") {
-        var messaggioErrore = 'Nessun risultato nella sezione ' + tipoFilmSerie;
-        if (tipoFilmSerie == "Film") {
+        if (tipoFilmSerie == "movie") {
+            var messaggioErrore = 'Nessun risultato nella sezione Film';
             $('.film-dettaglio').html(messaggioErrore);
-        } else if (tipoFilmSerie == "Serie TV") {
+        } else if (tipoFilmSerie == "tv") {
+            var messaggioErrore = 'Nessun risultato nella sezione Serie TV';
             $('.serie-tv-dettaglio').html(messaggioErrore);
         }
 
@@ -165,15 +238,17 @@ function stars(voto) {
 };
 
 function flags(lang) {
-    var flagImg = {
-        en: 'en.svg',
-        it: 'it.svg'
+    var flagImg = [
+        'en',
+        'it'
+    ];
+    for (var i = 0; i < flagImg.length; i++) {
+        if (flagImg.includes(lang)) {
+            return '<img class="flags" src="img/flags/' + flagImg[i] + '.svg" alt=""></img>';
+        } else {
+            return lang;
+        }
     };
-    for (var k in flagImg) {
-        if (k == lang) {
-            return '<img class="flags" src="img/flags/' + flagImg[k] + '" alt=""></img>';
-        };
-    }
-    return lang;
-
 }
+
+

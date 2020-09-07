@@ -13,30 +13,33 @@
         integrity="sha512-zT3zHcFYbQwjHdKjCu6OMmETx8fJA9S7E6W7kBeFxultf75OPTYUJigEKX58qgyQMi1m1EgenfjMXlRZG8BXaw=="
         crossorigin="anonymous"></script>
     <link rel="stylesheet" href="css/style.css">
-    <title>Document</title>
+    <title>Boolflix</title>
 </head>
 
 <body>
     <header>
-        <input id="cerca-input" type="text" placeholder="Cerca il titolo di un film">
-        <button id="cerca-btn">Cerca</button>
+        <img id="logo" src="img/logo.png" alt="Logo Boolflix">
+        <div class="search-box">
+            <input id="cerca-input" type="text" placeholder="Cerca il titolo di un film">
+            <button id="cerca-btn">Cerca</button>
+        </div>
     </header>
     <main>
         <div class="error-message"></div>
         <div class="sezione-film">
-            <h2>Film</h2>
-            <div class="film-dettaglio"></div>
+            <h2 class="section-title">Film</h2>
+            <div class="film-dettaglio elenco-titoli"></div>
         </div>
         <div class="sezione-serie-tv">
-            <h2>Serie TV</h2>
-            <div class="serie-tv-dettaglio"></div>
+            <h2 class="section-title">Serie TV</h2>
+            <div class="serie-tv-dettaglio elenco-titoli"></div>
         </div>
     </main>
 
     <!-- template Handlebars -->
     <script id="entry-template" type="text/x-handlebars-template">
-        <div class="film-card">
-            <img class="poster" src="{{img}}" alt="" srcset="">
+        <div class="film-card" data-id="{{id}}" data-popolarita="{{popolarita}}">
+            <img class="poster" src="{{img}}" alt="{{title}}" srcset="">
             <ul class="film-dati">
                 <li>
                     <span class="dati-titoli">Titolo: </span>
@@ -59,10 +62,28 @@
                     <span class="dati-titoli">Tipo: </span>
                     <span class="dati-nomi">{{type}}</span>
                 </li>
-            
+                <li>
+                    <span class="dati-titoli">Descrizione: </span>
+                    <span class="dati-nomi">{{overview}}</span>
+                </li>
             </ul>
+
+
         </div>
       
+    </script>
+
+
+    <!-- template Handlebars -->
+    <script id="template-generi-cast" type="text/x-handlebars-template">
+        <li>
+            <span class="dati-titoli">Generi: </span>
+            <span class="dati-nomi">{{genre}}</span>
+        </li>
+        <li>
+            <span class="dati-titoli">Cast: </span>
+            <span class="dati-nomi">{{cast}}</span>
+        </li>
     </script>
 
 
