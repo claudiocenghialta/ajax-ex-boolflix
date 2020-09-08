@@ -28,6 +28,10 @@ https://api.themoviedb.org/3/search/movie
 
 
 $(document).ready(function () {
+    var elencoGeneri = getGeneri('movie');
+    var elencoGeneri2 = getGeneri('tv');
+    datiIniziali('movie');
+    datiIniziali('tv');
     $('#cerca-input').val("");
     $('#cerca-btn').click(iniziaRicerca);
     $('#cerca-input').keyup(function () {
@@ -39,6 +43,34 @@ $(document).ready(function () {
 }); //fine document ready
 
 //INIZIO FUNZIONI
+
+function datiIniziali(tipo) {
+    //faccio chiamata ajax sulla base del valore salvato nella variabile passata
+    if (tipo == 'movie') {
+        var ordinamento = 'vote_count.desc';
+    } else if (tipo == 'tv') {
+        var ordinamento = 'popularity.desc';
+    };
+    $.ajax({
+        url: 'https://api.themoviedb.org/3/discover/' + tipo,
+        method: "GET",
+        data: {
+            api_key: "f55f5e2e7cdc1cc61c195d269b630b9c",
+            language: "it-IT",
+            sort_by: ordinamento
+        },
+        success: function (resp) {
+            //passo l'array con i risultati alla funzione che stampa l'elenco
+            stampaElenco(resp.results, tipo, 8);
+        },
+        error: function (resp) {
+            //segnalo errore e compilo log
+            alert('errore');
+            console.log(resp);
+        },
+    }) //fine chiamata ajax
+}
+
 
 function iniziaRicerca() {
     //prendo il valore inserito nell'input e lo salvo in una variabile
@@ -80,7 +112,7 @@ function ricercaGlobale(stringaRicerca, url, tipo) {
     }) //fine chiamata ajax
 }
 
-function stampaElenco(data, type) {
+function stampaElenco(data, type, numRisultati) {
     //elementi per template Handlebars
     var source = $("#entry-template").html();
     var template = Handlebars.compile(source);
@@ -88,8 +120,13 @@ function stampaElenco(data, type) {
     if (data.length == 0) {
         errorMessage("nessunRisultato", type);
     } else {
-        //ciclo tutti i risultati ottenuti
-        for (var i = 0; i < data.length; i++) {
+        //ciclo tutti i risultati ottenuti 
+        // se numRisultati viene passato filtro al massimo per quel numero di risultati
+        var maxRisultati = data.length;
+        if (numRisultati != null) {
+            maxRisultati = numRisultati;
+        }
+        for (var i = 0; i < maxRisultati; i++) {
             if (type == 'movie') {
                 var titolo = data[i].title;
                 var titoloOriginale = data[i].original_title;
@@ -196,6 +233,30 @@ function stampaDettagli(id, tipo, generi, attori) {
         $('.serie-tv-dettaglio .film-card[data-id="' + id + '"] .film-dati').append(html);
     };
 };
+
+function getGeneri(tipo) {
+    var url = "https://api.themoviedb.org/3/genre/" + tipo + "/list";
+
+    //faccio chiamata ajax sulla base del valore salvato nella variabile passata
+    $.ajax({
+        url: url, //url passato
+        method: "GET",
+        data: {
+            api_key: "f55f5e2e7cdc1cc61c195d269b630b9c",
+            language: "it-IT",
+        },
+        success: function (resp) {
+            console.log(tipo, resp.genres);
+            return resp.genres
+        },
+        error: function (resp) {
+            //segnalo errore e compilo log
+            alert('errore')
+            console.log(resp);
+        },
+    }) //fine chiamata ajax
+}
+
 
 function errorMessage(tipoErrore, tipoFilmSerie) {
 
