@@ -28,10 +28,14 @@ https://api.themoviedb.org/3/search/movie
 
 
 $(document).ready(function () {
-    var elencoGeneri = getGeneri('movie');
-    var elencoGeneri2 = getGeneri('tv');
+    getGeneri();
     datiIniziali('movie');
     datiIniziali('tv');
+    $('#logo').click(function () {
+        resetData();
+        datiIniziali('movie');
+        datiIniziali('tv');
+    });
     $('#cerca-input').val("");
     $('#cerca-btn').click(iniziaRicerca);
     $('#cerca-input').keyup(function () {
@@ -39,6 +43,7 @@ $(document).ready(function () {
             iniziaRicerca();
         };
     });
+
 
 }); //fine document ready
 
@@ -82,7 +87,6 @@ function iniziaRicerca() {
         ricercaGlobale(datiRicerca, "https://api.themoviedb.org/3/search/movie", "movie");
         ricercaGlobale(datiRicerca, "https://api.themoviedb.org/3/search/tv", 'tv');
     } else {
-        resetData();
         //stampo messaggio di errore al posto dell'elenco titoli
         errorMessage("ricercaVuota");
     };
@@ -209,34 +213,48 @@ function stampaDettagli(id, tipo, generi, attori) {
 
     //elenco generi
     var elencoGeneri = '';
+    var concatenaGeneri = '';
     for (var i = 0; i < generi.length; i++) {
         elencoGeneri += generi[i].name;
+        concatenaGeneri += generi[i].name;
         //se non sono all'ultimo attore aggiiungo una virgola 
         if (i != generi.length - 1) {
-            elencoGeneri += ', ';
+            elencoGeneri += ' ';
+            concatenaGeneri += ', ';
         }
     }
     //elementi per template Handlebars
     var source = $("#template-generi-cast").html();
     var template = Handlebars.compile(source);
     var context = {
-        genre: elencoGeneri,
+        genre: concatenaGeneri,
+        concatenaGenre: concatenaGeneri,
         cast: elencoAttori,
     };
+    console.log(concatenaGeneri.split(', '));
     if (tipo == 'movie') {
         // stampo sui template Handlebars ogni risultato del ciclo for
         var html = template(context);
         $('.film-dettaglio .film-card[data-id="' + id + '"] .film-dati').append(html);
+        $('.film-dettaglio .film-card[data-id="' + id + '"]').attr('data-generi', concatenaGeneri);
     } else if (tipo == 'tv') {
         // stampo sui template Handlebars ogni risultato del ciclo for
         var html = template(context);
         $('.serie-tv-dettaglio .film-card[data-id="' + id + '"] .film-dati').append(html);
+        $('.serie-tv-dettaglio .film-card[data-id="' + id + '"]').attr('data-generi', concatenaGeneri);
+
     };
 };
 
-function getGeneri(tipo) {
-    var url = "https://api.themoviedb.org/3/genre/" + tipo + "/list";
 
+
+
+function getGeneri() {
+    var source = $("#template-select").html();
+    var template = Handlebars.compile(source);
+    var arrayGenere = [];
+    var tipo = 'movie';
+    var url = "https://api.themoviedb.org/3/genre/" + tipo + "/list";
     //faccio chiamata ajax sulla base del valore salvato nella variabile passata
     $.ajax({
         url: url, //url passato
@@ -247,7 +265,56 @@ function getGeneri(tipo) {
         },
         success: function (resp) {
             console.log(tipo, resp.genres);
-            return resp.genres
+            for (var i = 0; i < resp.genres.length; i++) {
+                if (!arrayGenere.includes(resp.genres[i].name)) {
+                    arrayGenere.push(resp.genres[i].name);
+                    var context = resp.genres[i];
+                    var html = template(context);
+                    $('#filter-genre').append(html)
+                }
+            }
+            var tipo = 'tv';
+            var url = "https://api.themoviedb.org/3/genre/" + tipo + "/list";
+            //faccio chiamata ajax sulla base del valore salvato nella variabile passata
+            $.ajax({
+                url: url, //url passato
+                method: "GET",
+                data: {
+                    api_key: "f55f5e2e7cdc1cc61c195d269b630b9c",
+                    language: "it-IT",
+                },
+                success: function (resp) {
+                    console.log(tipo, resp.genres);
+                    //compilo select con elenco generi
+                    for (var i = 0; i < resp.genres.length; i++) {
+                        if (!arrayGenere.includes(resp.genres[i].name)) {
+                            arrayGenere.push(resp.genres[i].name);
+                            var context = resp.genres[i];
+                            var html = template(context);
+                            $('#filter-genre').append(html)
+                        }
+                    }
+                    //filtro risultati al click sulla select
+                    $('#filter-genre option').click(function () {
+                        var genere = $(this).html();
+                        console.log(genere);
+                        if (genere == "All") {
+                            $('.film-card').show();
+
+                        } else {
+
+                            $('.film-card').hide();
+                            $('.film-card[data-generi="' + genere + '"').show();
+                        }
+
+                    })
+                },
+                error: function (resp) {
+                    //segnalo errore e compilo log
+                    alert('errore')
+                    console.log(resp);
+                },
+            }) //fine chiamata ajax
         },
         error: function (resp) {
             //segnalo errore e compilo log

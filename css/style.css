@@ -34,7 +34,8 @@ header {
     vertical-align: middle;
 }
 img#logo{
-   height: 50px; 
+    height: 50px; 
+    cursor: pointer;
 }
 .search-box #cerca-input {
     height: 40px;
@@ -43,6 +44,8 @@ img#logo{
     height: 40px;
     padding: 0 30px;
     font-size: 16px;
+    cursor: pointer;
+
 }
 
 /* formattazione sezione con elenco titoli*/
@@ -77,7 +80,7 @@ img#logo{
     right: 0;
     bottom: 0;
     padding: 30px 5px;
-    background-color: rgba(0,0,0,0.9);
+    background-color: rgba(0,0,0,0.8);
     color: white;
     display: none;
 }

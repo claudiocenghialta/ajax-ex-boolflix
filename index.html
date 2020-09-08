@@ -19,6 +19,9 @@
 <body>
     <header>
         <img id="logo" src="img/logo.png" alt="Logo Boolflix">
+        <select id="filter-genre">
+            <option value="All">All</option>
+        </select>
         <div class="search-box">
             <input id="cerca-input" type="text" placeholder="Cerca un film o una serie tv">
             <button id="cerca-btn">Cerca</button>
@@ -38,7 +41,7 @@
 
     <!-- template Handlebars -->
     <script id="entry-template" type="text/x-handlebars-template">
-        <div class="film-card" data-id="{{id}}" data-popolarita="{{popolarita}}">
+        <div class="film-card" data-id="{{id}}" data-popolarita="{{popolarita}}" data-generi="">
             <img class="poster" src="{{img}}" alt="{{title}}" srcset="">
             <ul class="film-dati">
                 <li>
@@ -78,7 +81,7 @@
     <script id="template-generi-cast" type="text/x-handlebars-template">
         <li>
             <span class="dati-titoli">Generi: </span>
-            <span class="dati-nomi">{{genre}}</span>
+            <span class="dati-nomi generi {{genre}}">{{concatenaGenre}}</span>
         </li>
         <li>
             <span class="dati-titoli">Cast: </span>
@@ -86,7 +89,11 @@
         </li>
     </script>
 
+    <!-- template handlebars -->
 
+    <script id="template-select" type="text/x-handlebars-template">
+        <option value="{{name}}">{{name}}</option>
+    </script>
 
     <script src="js/script.js"></script>
 </body>
