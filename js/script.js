@@ -53,8 +53,8 @@ function datiIniziali(tipo) {
     //faccio chiamata ajax sulla base del valore salvato nella variabile passata
     if (tipo == 'movie') {
         // var ordinamento = 'popularity.desc';
-        var ordinamento = 'revenue.desc';
-        // var ordinamento = 'vote_count.desc';
+        // var ordinamento = 'revenue.desc';
+        var ordinamento = 'vote_count.desc';
         // var ordinamento = 'vote_average.desc';
     } else if (tipo == 'tv') {
         var ordinamento = 'popularity.desc';
@@ -69,7 +69,7 @@ function datiIniziali(tipo) {
             api_key: "f55f5e2e7cdc1cc61c195d269b630b9c",
             language: "it-IT",
             sort_by: ordinamento,
-            adult: 'false',
+            include_adult: 'false',
         },
         success: function (resp) {
             //passo l'array con i risultati alla funzione che stampa l'elenco
@@ -81,8 +81,7 @@ function datiIniziali(tipo) {
             console.log(resp);
         },
     }) //fine chiamata ajax
-}
-
+};
 
 function iniziaRicerca() {
     //prendo il valore inserito nell'input e lo salvo in una variabile
@@ -97,7 +96,7 @@ function iniziaRicerca() {
         //stampo messaggio di errore al posto dell'elenco titoli
         errorMessage("ricercaVuota");
     };
-}
+};
 
 function ricercaGlobale(stringaRicerca, url, tipo) {
     //faccio chiamata ajax sulla base del valore salvato nella variabile passata
@@ -122,7 +121,7 @@ function ricercaGlobale(stringaRicerca, url, tipo) {
 
         },
     }) //fine chiamata ajax
-}
+};
 
 function stampaElenco(data, type, numRisultati) {
     //elementi per template Handlebars
@@ -206,7 +205,7 @@ function ricercaDettagli(id, tipo) {
 
         },
     }) //fine chiamata ajax
-}
+};
 
 function stampaDettagli(id, tipo, generi, attori) {
     //elenco attori
@@ -322,7 +321,7 @@ function getGeneri() {
             console.log(resp);
         },
     }) //fine chiamata ajax
-}
+};
 
 function errorMessage(tipoErrore, tipoFilmSerie) {
 
@@ -376,6 +375,6 @@ function flags(lang) {
             return lang;
         }
     };
-}
+};
 
 
