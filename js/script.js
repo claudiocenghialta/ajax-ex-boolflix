@@ -213,35 +213,30 @@ function stampaDettagli(id, tipo, generi, attori) {
 
     //elenco generi
     var elencoGeneri = '';
-    var concatenaGeneri = '';
     for (var i = 0; i < generi.length; i++) {
         elencoGeneri += generi[i].name;
-        concatenaGeneri += generi[i].name;
         //se non sono all'ultimo attore aggiiungo una virgola 
         if (i != generi.length - 1) {
-            elencoGeneri += ' ';
-            concatenaGeneri += ', ';
+            elencoGeneri += ', ';
         }
     }
     //elementi per template Handlebars
     var source = $("#template-generi-cast").html();
     var template = Handlebars.compile(source);
     var context = {
-        genre: concatenaGeneri,
-        concatenaGenre: concatenaGeneri,
+        genre: elencoGeneri,
         cast: elencoAttori,
     };
-    console.log(concatenaGeneri.split(', '));
     if (tipo == 'movie') {
         // stampo sui template Handlebars ogni risultato del ciclo for
         var html = template(context);
         $('.film-dettaglio .film-card[data-id="' + id + '"] .film-dati').append(html);
-        $('.film-dettaglio .film-card[data-id="' + id + '"]').attr('data-generi', concatenaGeneri);
+        $('.film-dettaglio .film-card[data-id="' + id + '"]').attr('data-generi', elencoGeneri);
     } else if (tipo == 'tv') {
         // stampo sui template Handlebars ogni risultato del ciclo for
         var html = template(context);
         $('.serie-tv-dettaglio .film-card[data-id="' + id + '"] .film-dati').append(html);
-        $('.serie-tv-dettaglio .film-card[data-id="' + id + '"]').attr('data-generi', concatenaGeneri);
+        $('.serie-tv-dettaglio .film-card[data-id="' + id + '"]').attr('data-generi', elencoGeneri);
 
     };
 };
@@ -264,7 +259,6 @@ function getGeneri() {
             language: "it-IT",
         },
         success: function (resp) {
-            console.log(tipo, resp.genres);
             for (var i = 0; i < resp.genres.length; i++) {
                 if (!arrayGenere.includes(resp.genres[i].name)) {
                     arrayGenere.push(resp.genres[i].name);
@@ -284,7 +278,6 @@ function getGeneri() {
                     language: "it-IT",
                 },
                 success: function (resp) {
-                    console.log(tipo, resp.genres);
                     //compilo select con elenco generi
                     for (var i = 0; i < resp.genres.length; i++) {
                         if (!arrayGenere.includes(resp.genres[i].name)) {
@@ -297,14 +290,11 @@ function getGeneri() {
                     //filtro risultati al click sulla select
                     $('#filter-genre option').click(function () {
                         var genere = $(this).html();
-                        console.log(genere);
                         if (genere == "All") {
                             $('.film-card').show();
-
                         } else {
-
                             $('.film-card').hide();
-                            $('.film-card[data-generi="' + genere + '"').show();
+                            $('.film-card[data-generi*="' + genere + '"').show();
                         }
 
                     })
