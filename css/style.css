@@ -13,8 +13,9 @@
 /*formattazioni generiche*/
 body {
     font-family: 'Open Sans', sans-serif;
-    font-size: 14px;
+    font-size: 16px;
     background-color: #0d0d0d;
+    color: lightgray;
 }
 
 .error-message{
@@ -25,6 +26,7 @@ body {
 }
 header, main {
     width: 98vw;
+    max-width: 1600px;
     margin: 30px auto;
 }
 /*formattazione header*/
@@ -37,11 +39,21 @@ img#logo{
     height: 50px; 
     cursor: pointer;
 }
-.search-box #cerca-input {
-    height: 40px;
+.search-box {
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
 }
-.search-box #cerca-btn {
+.search-box * {
     height: 40px;
+    margin-left: 5px;
+}
+
+.search-box #cerca-input {
+    margin-left: 50px;
+}
+    
+.search-box #cerca-btn {
     padding: 0 30px;
     font-size: 16px;
     cursor: pointer;
@@ -52,8 +64,6 @@ img#logo{
 .elenco-titoli{
     display: flex;
     flex-wrap: wrap;
-    color: lightgray;
-    font-size: 16px;
 }
 .section-title {
     color: white;

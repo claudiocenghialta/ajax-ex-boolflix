@@ -52,9 +52,15 @@ $(document).ready(function () {
 function datiIniziali(tipo) {
     //faccio chiamata ajax sulla base del valore salvato nella variabile passata
     if (tipo == 'movie') {
-        var ordinamento = 'vote_count.desc';
+        // var ordinamento = 'popularity.desc';
+        var ordinamento = 'revenue.desc';
+        // var ordinamento = 'vote_count.desc';
+        // var ordinamento = 'vote_average.desc';
     } else if (tipo == 'tv') {
         var ordinamento = 'popularity.desc';
+        // var ordinamento = 'vote_average.desc';
+        // var ordinamento = 'first_air_date.desc';
+
     };
     $.ajax({
         url: 'https://api.themoviedb.org/3/discover/' + tipo,
@@ -62,7 +68,8 @@ function datiIniziali(tipo) {
         data: {
             api_key: "f55f5e2e7cdc1cc61c195d269b630b9c",
             language: "it-IT",
-            sort_by: ordinamento
+            sort_by: ordinamento,
+            adult: 'false',
         },
         success: function (resp) {
             //passo l'array con i risultati alla funzione che stampa l'elenco
@@ -91,6 +98,7 @@ function iniziaRicerca() {
         errorMessage("ricercaVuota");
     };
 }
+
 function ricercaGlobale(stringaRicerca, url, tipo) {
     //faccio chiamata ajax sulla base del valore salvato nella variabile passata
     $.ajax({
@@ -134,9 +142,12 @@ function stampaElenco(data, type, numRisultati) {
             if (type == 'movie') {
                 var titolo = data[i].title;
                 var titoloOriginale = data[i].original_title;
+                var tipologia = 'Film'
             } else if (type == 'tv') {
                 var titolo = data[i].name;
                 var titoloOriginale = data[i].original_name;
+                var tipologia = 'Serie TV'
+
             };
             //compilo valore del link al poster del film 
             var img = "https://image.tmdb.org/t/p/w342/" + data[i].poster_path
@@ -151,7 +162,7 @@ function stampaElenco(data, type, numRisultati) {
                 original_title: titoloOriginale,
                 original_language: flags(data[i].original_language),
                 vote_average: stars(data[i].vote_average),
-                type: type,
+                type: tipologia,
                 img: img,
                 popolarita: data[i].popularity,
                 overview: data[i].overview.substring(0, 200) + '[...]'
@@ -169,6 +180,7 @@ function stampaElenco(data, type, numRisultati) {
         };
     }
 };
+
 function ricercaDettagli(id, tipo) {
     var url = "https://api.themoviedb.org/3/" + tipo + '/' + id;
 
@@ -195,6 +207,7 @@ function ricercaDettagli(id, tipo) {
         },
     }) //fine chiamata ajax
 }
+
 function stampaDettagli(id, tipo, generi, attori) {
     //elenco attori
     var elencoAttori = '';
@@ -240,9 +253,6 @@ function stampaDettagli(id, tipo, generi, attori) {
 
     };
 };
-
-
-
 
 function getGeneri() {
     var source = $("#template-select").html();
@@ -314,7 +324,6 @@ function getGeneri() {
     }) //fine chiamata ajax
 }
 
-
 function errorMessage(tipoErrore, tipoFilmSerie) {
 
     if (tipoErrore == "ricercaVuota") {
@@ -330,12 +339,12 @@ function errorMessage(tipoErrore, tipoFilmSerie) {
 
     };
 };
+
 function resetData() {
     // svuoto l'elenco dei film già cercati in precedenza
     $('.film-dettaglio').empty();
     $('.serie-tv-dettaglio').empty();
 };
-
 
 function stars(voto) {
     var resto = voto % 2;
